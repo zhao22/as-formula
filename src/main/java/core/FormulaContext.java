@@ -3,6 +3,7 @@ package core;
 import operator.Operator;
 import operator.impl.*;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -14,6 +15,8 @@ import java.util.concurrent.ConcurrentHashMap;
 class FormulaContext {
 
     static final char SPACE = ' ';
+
+    static final String EMPTY = "";
 
     private static final char LEFT_BRACKET = '(';
     /**
@@ -85,5 +88,13 @@ class FormulaContext {
 
     static int getPriorityOfBracket(char bracket) {
         return isLeftBracket(bracket) ? PRIORITY_OF_LEFT_BRACKET : PRIORITY_OF_RIGHT_BRACKET;
+    }
+
+    static boolean isEmpty(String string) {
+        return string == null || "".equals(string);
+    }
+
+    static boolean isEmpty(Collection collection) {
+        return collection == null || collection.isEmpty();
     }
 }

@@ -15,6 +15,9 @@ class FormulaParser {
      * @return
      */
     ParseResults parse(String formula) {
+        if (formula == null || "".equals(formula)) {
+            throw new FormulaException("unexpected formula expression");
+        }
         formula = removeSpace(formula);
         ParseResults results = new ParseResults(formula.length());
         char[] chars = formula.toCharArray();
@@ -38,6 +41,9 @@ class FormulaParser {
                 }
                 results.append(builder.toString());
             }
+        }
+        if (bracketsPriority != 0) {
+            throw new FormulaException("number of left brackets doesn't match number of right brackets");
         }
         return results;
     }

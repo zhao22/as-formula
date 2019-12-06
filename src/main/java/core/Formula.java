@@ -36,7 +36,7 @@ public class Formula {
      */
     public Formula set(String key, Object value) {
         if (key == null || "".equals(key)) {
-            return this;
+            throw new FormulaException("unexpected key");
         }
         List<String> template = results.getArguments();
         if (arguments == null || arguments.size() == 0) {
@@ -64,8 +64,8 @@ public class Formula {
      * @return {@link BigDecimal} 运算结果
      */
     public BigDecimal calc() {
-        boolean isEmpty = this.arguments == null || this.arguments.size() == 0;
-        List<String> arguments = isEmpty ? new ArrayList<>(results.getArguments()) : new ArrayList<>(this.arguments);
+        List<String> arguments = FormulaContext.isEmpty(this.arguments) ?
+                new ArrayList<>(results.getArguments()) : new ArrayList<>(this.arguments);
         return calculator.calculate(arguments, results.getNodes());
     }
 
