@@ -3,25 +3,32 @@ package core;
 import operator.Operator;
 import operator.impl.*;
 
-import java.math.BigDecimal;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
+ * 公式计算上下文信息
  * @author zhaoxin
  * @date 2019-12-04
  */
 class FormulaContext {
 
-    public static final char SPACE = ' ';
+    static final char SPACE = ' ';
 
     private static final char LEFT_BRACKET = '(';
+    /**
+     * 左括号的优先级
+     */
     private static final int PRIORITY_OF_LEFT_BRACKET = 10;
     private static final char RIGHT_BRACKET = ')';
+    /**
+     * 右括号的优先级
+     */
     private static final int PRIORITY_OF_RIGHT_BRACKET = -10;
 
+    /**
+     * 操作符列表
+     */
     private static final Map<Character, Operator> OPERATOR_MAP = new ConcurrentHashMap<>(32);
 
     static {
@@ -46,19 +53,29 @@ class FormulaContext {
         OPERATOR_MAP.put(operator.getCode(), operator);
     }
 
-    public static boolean isOperator(char signal) {
-        return OPERATOR_MAP.containsKey(signal);
+    /**
+     * 符号是否为操作符
+     * @param character 元素
+     * @return {@link Boolean} true: 元素是操作符 false: 元素是其他信息
+     */
+    static boolean isOperator(char character) {
+        return OPERATOR_MAP.containsKey(character);
     }
 
-    public static int getPriority(char operator) {
+    static int getPriority(char operator) {
         return OPERATOR_MAP.get(operator).getPriority();
     }
 
-    public static Operator getOperator(char operator) {
+    static Operator getOperator(char operator) {
         return OPERATOR_MAP.get(operator);
     }
 
-    public static boolean isBrackets(char character) {
+    /**
+     * 元素是否为括号
+     * @param character {@link Character} 元素
+     * @return {@link Boolean} true: 元素是括号， false: 元素不是括号
+     */
+    static boolean isBrackets(char character) {
         return isLeftBracket(character) || character == RIGHT_BRACKET;
     }
 
@@ -66,7 +83,7 @@ class FormulaContext {
         return character == LEFT_BRACKET;
     }
 
-    public static int getPriorityOfBracket(char bracket) {
+    static int getPriorityOfBracket(char bracket) {
         return isLeftBracket(bracket) ? PRIORITY_OF_LEFT_BRACKET : PRIORITY_OF_RIGHT_BRACKET;
     }
 }

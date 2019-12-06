@@ -3,26 +3,34 @@ package core;
 import static core.FormulaContext.isBrackets;
 
 /**
+ * 公式解析
  * @author zhaoxin
  * @date 2019-12-04
  */
 class FormulaParser {
 
-    private ParseResults parseResults;
-
-    void parse(String formula) {
+    /**
+     * 解析公式
+     * @param formula
+     * @return
+     */
+    ParseResults parse(String formula) {
         formula = removeSpace(formula);
         ParseResults results = new ParseResults(formula.length());
         char[] chars = formula.toCharArray();
-        int basePriority = 0;
+        int bracketsPriority = 0;
 
         for (int i = 0; i < chars.length; i++) {
             if (isBrackets(chars[i])) {
-                basePriority += FormulaContext.getPriorityOfBracket(chars[i]);
+                // 如果是左括号，则提高优先级；右括号则降低优先级。后续的操作符的优先级将加入括号优先级
+                bracketsPriority += FormulaContext.getPriorityOfBracket(chars[i]);
             } else if (FormulaContext.isOperator(chars[i])) {
-                FormulaNode node = FormulaNode.create(results.sizeOfArgument(), chars[i], basePriority);
+                // 如果是操作符，将创建node节点
+                OperatorNode node = OperatorNode.create(results.sizeOfArgument(), chars[i], bracketsPriority);
+                // 将node 节点插入results中
                 results.insert(node);
             } else {
+                // 不是括号和操作符，统一视作代数。
                 StringBuilder builder = new StringBuilder().append(chars[i]);
                 while (i + 1 < chars.length && !FormulaContext.isOperator(chars[i + 1]) && !isBrackets(chars[i + 1])) {
                     builder.append(chars[i + 1]);
@@ -31,14 +39,16 @@ class FormulaParser {
                 results.append(builder.toString());
             }
         }
-        this.parseResults = results;
+        return results;
     }
 
+    /**
+     * 去除掉公式中所有的空格
+     * @param formula 公式
+     * @return {@link String} 去除掉空格的公式
+     */
     private static String removeSpace(String formula) {
         return formula.replaceAll(FormulaContext.SPACE + "", "");
     }
 
-    ParseResults getResults() {
-        return this.parseResults;
-    }
 }
