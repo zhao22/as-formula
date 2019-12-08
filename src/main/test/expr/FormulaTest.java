@@ -22,19 +22,12 @@ public class FormulaTest {
     @Test
     public void algebraTest() {
         Formula at = new Formula("(1 + i) ^ t");
-        Assert.assertEquals(at.set("i", 0.0485).set("t", 5).calc().doubleValue(), 1.2671912750046956, 0);
-        Assert.assertEquals(at.set("t", 3).calc().doubleValue(), 1.152670834125, 0);
-    }
-
-    @Test
-    public void clearAndSetMapTest() {
-        Formula at = new Formula("(1 + i) ^ t");
-        Assert.assertEquals(at.set("i", 0.0485).set("t", 3).calc().doubleValue(), 1.152670834125, 0);
-        at.clear();
-        Map<String, Object> map = new HashMap<>();
-        map.put("i", 0.0485);
-        map.put("t", 5);
-        Assert.assertEquals(at.set(map).calc().doubleValue(), 1.26719127500469553125, 0);
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("i", 0.0485);
+        parameters.put("t", 5);
+        Assert.assertEquals(at.calc(parameters).doubleValue(), 1.2671912750046956, 0);
+        parameters.put("t", 3);
+        Assert.assertEquals(at.calc(parameters).doubleValue(), 1.152670834125, 0);
     }
 
     @Test
@@ -44,11 +37,16 @@ public class FormulaTest {
         CountDownLatch countDownLatch = new CountDownLatch(20);
         for (int i = 0; i < 20; i++) {
             Thread t = new Thread(() -> {
+                Map<String, Object> parameters = new HashMap<>();
                 int m = random.nextInt(20);
+                parameters.put("m", m);
                 int a = random.nextInt(20);
+                parameters.put("a", a);
                 try {
-                    Assert.assertEquals(m * a, formula.set("m", m).set("a", a).calc().intValue());
-                } catch (Error e) {
+                    Assert.assertEquals(m * a, formula.calc(parameters).intValue());
+                } catch (Error e)
+
+                {
                     e.printStackTrace();
                 }
                 countDownLatch.countDown();

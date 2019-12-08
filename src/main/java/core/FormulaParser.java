@@ -27,6 +27,9 @@ class FormulaParser {
             if (isBrackets(chars[i])) {
                 // 如果是左括号，则提高优先级；右括号则降低优先级。后续的操作符的优先级将加入括号优先级
                 bracketsPriority += FormulaContext.getPriorityOfBracket(chars[i]);
+                if (bracketsPriority < 0) {
+                    throw new FormulaException("unexpected right bracket on position:" + i);
+                }
             } else if (FormulaContext.isOperator(chars[i])) {
                 // 如果是操作符，将创建node节点
                 OperatorNode node = OperatorNode.create(results.sizeOfArgument(), chars[i], bracketsPriority);

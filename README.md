@@ -16,7 +16,7 @@ System.out.println(f.calc().doubleValue()); // 0.3
 通过使用Formula().calc()方法，会返回一个BigDecimal对象，  
 通过调用doubleValue()方法即可生成准确的double数值。  
 
-Formula对象会缓存上次的计算结果，多次调用可以提高计算效率。
+Formula对象会缓存上次的解析结果，多次调用可以提高计算效率。
 ```
 Formula f = new Formula("0.1 + 0.2");
 System.out.println(f.calc().doubleValue()); // 0.3
@@ -29,15 +29,25 @@ System.out.println(f.calc().doubleValue()); // 0.3
 
 ```
 Formula at = new Formula("(1 + i) ^ t");
-System.out.println(at.set(i, 0.0485).set(t, 360).calc()); // 1.2671912750046956
+Map<String, Object> parameters = new HashMap<String,Object>();
+parameters.put("i", 0.0485);
+parameters.put("t", 360);
+System.out.println(at.calc(parameters)); // 1.2671912750046956
 ```
 
-在第一次计算结束之后，可以只替换其中的部分参数进行计算
+## 推荐设置为公用静态变量
+
+Formula 在加载后是线程安全的(详见 FormulaTest 的 ThreadTest方法)，可以将常用的公式作为公用变量初始化在公用区域，
+Formula 的构造方法执行后将会存储公式的解析结果，提高调用的效率。
 
 ```
-Formula at = new Formula("(1 + i) ^ t");
-System.out.println(at.set(i, 0.0485).set(t, 360).calc()); // 1.2671912750046956
-System.out.println(at.set("t", 3).calc()) // 1.152670834125
-```
+static Formula formula = new Formula("(1 + i) ^ t");
 
-as-formula在多线程环境下会有线程不安全的问题(详见FormulaTest.threadTest方法)。所以暂时不建议将其设为公用静态变量。
+public void calc1() {
+   formula.calc(...);
+}
+
+public void calc2() {
+  formula.calc(...);
+}
+```
