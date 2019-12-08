@@ -4,6 +4,7 @@ import core.Formula;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.math.RoundingMode;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -17,6 +18,30 @@ public class FormulaTest {
         Formula f = new Formula("0.1 + 0.2");
         Assert.assertEquals(f.calc().doubleValue(), 0.3, 0);
         Assert.assertEquals(f.calc().doubleValue(), 0.3, 0);
+    }
+
+    @Test
+    public void divideTest() {
+        Formula f = new Formula("1 / 3");
+        Assert.assertEquals(f.calc().toString(), "0.33333333");
+        f = new Formula("1 / 3", 2, RoundingMode.HALF_UP);
+        Assert.assertEquals(f.calc().toString(), "0.33");
+        f = new Formula("1 / 3", 2, RoundingMode.CEILING);
+        Assert.assertEquals(f.calc().toString(), "0.34");
+    }
+
+    @Test
+    public void operatorTest() {
+        Formula formula = new Formula("1 + 2");
+        Assert.assertEquals(formula.calc().intValue(), 3);
+        formula = new Formula("1 - 2");
+        Assert.assertEquals(formula.calc().intValue(), -1);
+        formula = new Formula("1 * 2");
+        Assert.assertEquals(formula.calc().intValue(), 2);
+        formula = new Formula("1 / 2");
+        Assert.assertEquals(formula.calc().doubleValue(), 0.5, 0);
+        formula = new Formula("1 ^ 2");
+        Assert.assertEquals(formula.calc().intValue(), 1);
     }
 
     @Test

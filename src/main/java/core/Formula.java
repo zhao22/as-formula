@@ -1,6 +1,10 @@
 package core;
 
+import operator.Operator;
+import operator.impl.DivideOperator;
+
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -14,6 +18,8 @@ import java.util.Set;
 public class Formula {
 
     private ParseResults results;
+    private int scale = 8;
+    private RoundingMode mode = RoundingMode.HALF_UP;
 
     /**
      * 方法将会对传入公式进行解析，生成 {@link ParseResults}，之后可以根据这个模板重复运算
@@ -21,6 +27,12 @@ public class Formula {
      */
     public Formula(String formula) {
         results = new FormulaParser().parse(formula);
+    }
+
+    public Formula(String formula, int scale, RoundingMode mode) {
+        this(formula);
+        this.scale = scale;
+        this.mode = mode;
     }
 
     /**
@@ -51,12 +63,17 @@ public class Formula {
      * @param nodes 操作符节点列表
      * @return 公式计算结果
      */
-    BigDecimal calculate(List<String> arguments, List<OperatorNode> nodes) {
+    private BigDecimal calculate(List<String> arguments, List<OperatorNode> nodes) {
         BigDecimal result = BigDecimal.ZERO;
         for (OperatorNode node : nodes) {
             String arg1 = arguments.get(node.getFirst());
             String arg2 = arguments.get(node.getFirst() + 1);
-            result = FormulaContext.getOperator(node.getSignal()).execute(new BigDecimal(arg1), new BigDecimal(arg2));
+            Operator operator = FormulaContext.getOperator(node.getSignal());
+            if (operator instanceof DivideOperator) {
+                result = ((DivideOperator)operator).execute(new BigDecimal(arg1), new BigDecimal(arg2), scale, mode);
+            } else {
+                result = operator.execute(new BigDecimal(arg1), new BigDecimal(arg2));
+            }
             arguments.set(node.getFirst(), result.toString());
             arguments.set(node.getFirst() + 1, result.toString());
         }
