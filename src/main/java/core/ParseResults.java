@@ -20,11 +20,6 @@ class ParseResults {
      */
     private List<OperatorNode> nodes;
 
-    ParseResults() {
-        arguments = new ArrayList<>();
-        nodes = new ArrayList<>();
-    }
-
     /**
      * 根据长度初始化元素和节点列表。
      * @param length 公式长度
@@ -40,7 +35,7 @@ class ParseResults {
      */
     void insert(OperatorNode node) {
         int j = nodes.size();
-        if (nodes.size() == 0) {
+        if (j == 0) {
             nodes.add(node);
             return;
         }

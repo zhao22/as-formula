@@ -91,7 +91,7 @@ class FormulaContext {
     }
 
     static boolean isEmpty(String string) {
-        return string == null || "".equals(string);
+        return string == null || EMPTY.equals(string);
     }
 
     static boolean isEmpty(Collection collection) {

@@ -12,6 +12,10 @@ import java.util.concurrent.CountDownLatch;
 
 public class FormulaTest {
 
+    /**
+     * 直接计算测试
+     * 如果公式没有代数，可以不用设置参数直接计算
+     */
     @Test
     public void directTest() {
         Assert.assertEquals(0.1 + 0.2, 0.30000000000000004, 0);
@@ -20,6 +24,10 @@ public class FormulaTest {
         Assert.assertEquals(f.calc().doubleValue(), 0.3, 0);
     }
 
+    /**
+     * 除法位数测试
+     * 可以通过设置对除法小数位数的保留。
+     */
     @Test
     public void divideTest() {
         Formula f = new Formula("1 / 3");
@@ -30,6 +38,10 @@ public class FormulaTest {
         Assert.assertEquals(f.calc().toString(), "0.34");
     }
 
+    /**
+     * 操作符测试
+     * 目前Formula支持的所有运算符
+     */
     @Test
     public void operatorTest() {
         Formula formula = new Formula("1 + 2");
@@ -44,6 +56,10 @@ public class FormulaTest {
         Assert.assertEquals(formula.calc().intValue(), 1);
     }
 
+    /**
+     * 代数运算测试
+     * 公式可以在一开始不指定公式的某些值，在调用时通过Map传入
+     */
     @Test
     public void algebraTest() {
         Formula at = new Formula("(1 + i) ^ t");
@@ -55,6 +71,10 @@ public class FormulaTest {
         Assert.assertEquals(at.calc(parameters).doubleValue(), 1.152670834125, 0);
     }
 
+    /**
+     * 多线程环境测试
+     * Formula对象是线程安全的，可以将Formula作为静态公用变量。
+     */
     @Test
     public void threadTest() {
         Random random = new Random();
@@ -69,9 +89,7 @@ public class FormulaTest {
                 parameters.put("a", a);
                 try {
                     Assert.assertEquals(m * a, formula.calc(parameters).intValue());
-                } catch (Error e)
-
-                {
+                } catch (Error e) {
                     e.printStackTrace();
                 }
                 countDownLatch.countDown();
