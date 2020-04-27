@@ -85,4 +85,16 @@ public class FormulaTest {
         }
     }
 
+
+    @Test
+    public void loopCalcTest() {
+        Formula at = new Formula("t1*(a1+b1-6)");
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("a1", 3.2);
+        parameters.put("b1", 5.8);
+        parameters.put("t1", 5);
+        System.out.println(at.calc(parameters).doubleValue());
+        Assert.assertEquals(at.calc(parameters).doubleValue(), 15, 0);
+    }
+
 }

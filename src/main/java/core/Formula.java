@@ -5,10 +5,7 @@ import operator.impl.DivideOperator;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * 计算对象
@@ -65,19 +62,35 @@ public class Formula {
      */
     private BigDecimal calculate(List<String> arguments, List<OperatorNode> nodes) {
         BigDecimal result = BigDecimal.ZERO;
+        Set<Integer> calculatedIndexes = new HashSet<>(arguments.size() - 1);
         for (OperatorNode node : nodes) {
-            String arg1 = arguments.get(node.getFirst());
-            String arg2 = arguments.get(node.getFirst() + 1);
+            BigDecimal arg1 = getAndPutArguments(node.getFirst(),calculatedIndexes, arguments, result);
+            BigDecimal arg2 = getAndPutArguments(node.getFirst() + 1,calculatedIndexes, arguments, result);
             Operator operator = FormulaContext.getOperator(node.getSignal());
             if (operator instanceof DivideOperator) {
-                result = ((DivideOperator)operator).execute(new BigDecimal(arg1), new BigDecimal(arg2), scale, mode);
+                result = ((DivideOperator)operator).execute(arg1, arg2, scale, mode);
             } else {
-                result = operator.execute(new BigDecimal(arg1), new BigDecimal(arg2));
+                result = operator.execute(arg1, arg2);
             }
-            arguments.set(node.getFirst(), result.toString());
-            arguments.set(node.getFirst() + 1, result.toString());
         }
         return result;
+    }
+
+    /**
+     * 如果对应位置已经计算过了，将之前的计算结果返回。
+     * 如果对应位置没有计算过，将实际值返回，并将坐标添加过计算过节点中。
+     * @param index  对应坐标
+     * @param calculatedIndexes 已计算过坐标集合
+     * @param arguments  实际值
+     * @param result  之前的计算结果
+     * @return  对应位置应该参与当前计算的值
+     */
+    private BigDecimal getAndPutArguments(int index, Set<Integer> calculatedIndexes, List<String> arguments, BigDecimal result) {
+        if (calculatedIndexes.contains(index)) {
+            return result;
+        }
+        calculatedIndexes.add(index);
+        return new BigDecimal(arguments.get(index));
     }
 
 }

@@ -51,6 +51,8 @@ parameters.put("t", 360);
 System.out.println(at.calc(parameters)); // 1.2671912750046956
 ```
 
+
+
 ### 推荐设置为公用静态变量
 
 Formula 在加载后是线程安全的(详见 FormulaTest 的 ThreadTest方法)，可以将常用的公式作为公用变量初始化在公用区域，
