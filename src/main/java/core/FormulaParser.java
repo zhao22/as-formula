@@ -15,7 +15,7 @@ class FormulaParser {
      * @return
      */
     ParseResults parse(String formula) {
-        if (formula == null || "".equals(formula)) {
+        if (FormulaContext.isEmpty(formula)) {
             throw new FormulaException("unexpected formula expression");
         }
         formula = removeSpace(formula);
